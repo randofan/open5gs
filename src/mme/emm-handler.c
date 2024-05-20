@@ -139,17 +139,20 @@ int emm_handle_attach_request(mme_ue_t *mme_ue,
 
     /* Check TAI */
     served_tai_index = mme_find_served_tai(&mme_ue->tai);
-    if (served_tai_index < 0) {
-        /* Send Attach Reject */
-        ogs_warn("Cannot find Served TAI[PLMN_ID:%06x,TAC:%d]",
-            ogs_plmn_id_hexdump(&mme_ue->tai.plmn_id), mme_ue->tai.tac);
-        r = nas_eps_send_attach_reject(mme_ue->enb_ue, mme_ue,
-                OGS_NAS_EMM_CAUSE_TRACKING_AREA_NOT_ALLOWED,
-                OGS_NAS_ESM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
-        ogs_expect(r == OGS_OK);
-        ogs_assert(r != OGS_ERROR);
-        return OGS_ERROR;
-    }
+
+    // DAVID: Allow any TAI to be served.
+
+    // if (served_tai_index < 0) {
+    //     /* Send Attach Reject */
+    //     ogs_warn("Cannot find Served TAI[PLMN_ID:%06x,TAC:%d]",
+    //         ogs_plmn_id_hexdump(&mme_ue->tai.plmn_id), mme_ue->tai.tac);
+    //     r = nas_eps_send_attach_reject(mme_ue->enb_ue, mme_ue,
+    //             OGS_NAS_EMM_CAUSE_TRACKING_AREA_NOT_ALLOWED,
+    //             OGS_NAS_ESM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+    //     ogs_expect(r == OGS_OK);
+    //     ogs_assert(r != OGS_ERROR);
+    //     return OGS_ERROR;
+    // }
     ogs_debug("    SERVED_TAI_INDEX[%d]", served_tai_index);
 
     /* Store UE specific information */
@@ -207,15 +210,18 @@ int emm_handle_attach_request(mme_ue_t *mme_ue,
         memcpy(&mme_ue->nas_mobile_identity_imsi,
             &eps_mobile_identity->imsi, eps_mobile_identity->length);
 
-        emm_cause = emm_cause_from_access_control(mme_ue);
-        if (emm_cause != OGS_NAS_EMM_CAUSE_REQUEST_ACCEPTED) {
-            ogs_error("Rejected by PLMN-ID access control");
-            r = nas_eps_send_attach_reject(mme_ue->enb_ue, mme_ue,
-                    emm_cause, OGS_NAS_ESM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
-            ogs_expect(r == OGS_OK);
-            ogs_assert(r != OGS_ERROR);
-            return OGS_ERROR;
-        }
+
+        // DAVID Remove PLMN access control.
+
+        // emm_cause = emm_cause_from_access_control(mme_ue);
+        // if (emm_cause != OGS_NAS_EMM_CAUSE_REQUEST_ACCEPTED) {
+        //     ogs_error("Rejected by PLMN-ID access control");
+        //     r = nas_eps_send_attach_reject(mme_ue->enb_ue, mme_ue,
+        //             emm_cause, OGS_NAS_ESM_CAUSE_PROTOCOL_ERROR_UNSPECIFIED);
+        //     ogs_expect(r == OGS_OK);
+        //     ogs_assert(r != OGS_ERROR);
+        //     return OGS_ERROR;
+        // }
 
         ogs_nas_eps_imsi_to_bcd(
             &eps_mobile_identity->imsi, eps_mobile_identity->length,

@@ -80,12 +80,14 @@ ogs_pkbuf_t *nas_eps_security_encode(
         return NULL;
     }
 
-    if (ciphered) {
-        /* encrypt NAS message */
-        ogs_nas_encrypt(mme_ue->selected_enc_algorithm,
-            mme_ue->knas_enc, mme_ue->dl_count, NAS_SECURITY_BEARER,
-            OGS_NAS_SECURITY_DOWNLINK_DIRECTION, new);
-    }
+    // DAVID: Don't perform encryption.
+
+    // if (ciphered) {
+    //     /* encrypt NAS message */
+    //     ogs_nas_encrypt(mme_ue->selected_enc_algorithm,
+    //         mme_ue->knas_enc, mme_ue->dl_count, NAS_SECURITY_BEARER,
+    //         OGS_NAS_SECURITY_DOWNLINK_DIRECTION, new);
+    // }
 
     /* encode sequence number */
     ogs_assert(ogs_pkbuf_push(new, 1));
@@ -221,16 +223,18 @@ int nas_eps_security_decode(mme_ue_t *mme_ue,
         /* NAS EMM Header or ESM Header */
         ogs_assert(ogs_pkbuf_pull(pkbuf, 1));
 
-        if (security_header_type.ciphered) {
-            /* decrypt NAS message */
-            if (pkbuf->len == 0) {
-                ogs_error("Cannot decrypt Malformed NAS Message");
-                return OGS_ERROR;
-            }
-            ogs_nas_encrypt(mme_ue->selected_enc_algorithm,
-                mme_ue->knas_enc, mme_ue->ul_count.i32, NAS_SECURITY_BEARER,
-                OGS_NAS_SECURITY_UPLINK_DIRECTION, pkbuf);
-        }
+        // DAVID: Remove de-encryption.
+
+        // if (security_header_type.ciphered) {
+        //     /* decrypt NAS message */
+        //     if (pkbuf->len == 0) {
+        //         ogs_error("Cannot decrypt Malformed NAS Message");
+        //         return OGS_ERROR;
+        //     }
+        //     ogs_nas_encrypt(mme_ue->selected_enc_algorithm,
+        //         mme_ue->knas_enc, mme_ue->ul_count.i32, NAS_SECURITY_BEARER,
+        //         OGS_NAS_SECURITY_UPLINK_DIRECTION, pkbuf);
+        // }
     }
 
     return OGS_OK;

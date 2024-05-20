@@ -40,27 +40,41 @@ uint8_t mme_s6a_handle_aia(
         mme_ue_t *mme_ue, ogs_diam_s6a_message_t *s6a_message)
 {
     int r;
-    ogs_diam_s6a_aia_message_t *aia_message = NULL;
-    ogs_diam_e_utran_vector_t *e_utran_vector = NULL;
+
+    // DAVID: Remove real authentication vectors.
+
+    // ogs_diam_s6a_aia_message_t *aia_message = NULL;
+    // ogs_diam_e_utran_vector_t *e_utran_vector = NULL;
 
     ogs_assert(mme_ue);
     ogs_assert(s6a_message);
-    aia_message = &s6a_message->aia_message;
-    ogs_assert(aia_message);
-    e_utran_vector = &aia_message->e_utran_vector;
-    ogs_assert(e_utran_vector);
 
-    if (s6a_message->result_code != ER_DIAMETER_SUCCESS) {
-        ogs_warn("Authentication Information failed [%d]",
-                    s6a_message->result_code);
-        return emm_cause_from_diameter(s6a_message->err, s6a_message->exp_err);
-    }
+    // aia_message = &s6a_message->aia_message;
+    // ogs_assert(aia_message);
+    // e_utran_vector = &aia_message->e_utran_vector;
+    // ogs_assert(e_utran_vector);
 
-    mme_ue->xres_len = e_utran_vector->xres_len;
-    memcpy(mme_ue->xres, e_utran_vector->xres, mme_ue->xres_len);
-    memcpy(mme_ue->kasme, e_utran_vector->kasme, OGS_SHA256_DIGEST_SIZE);
-    memcpy(mme_ue->rand, e_utran_vector->rand, OGS_RAND_LEN);
-    memcpy(mme_ue->autn, e_utran_vector->autn, OGS_AUTN_LEN);
+    // DAVID: Remove checks to see if AIA is successful.
+
+    // if (s6a_message->result_code != ER_DIAMETER_SUCCESS) {
+    //     ogs_warn("Authentication Information failed [%d]",
+    //                 s6a_message->result_code);
+    //     return emm_cause_from_diameter(s6a_message->err, s6a_message->exp_err);
+    // }
+
+    // mme_ue->xres_len = e_utran_vector->xres_len;
+    // memcpy(mme_ue->xres, e_utran_vector->xres, mme_ue->xres_len);
+    // memcpy(mme_ue->kasme, e_utran_vector->kasme, OGS_SHA256_DIGEST_SIZE);
+    // memcpy(mme_ue->rand, e_utran_vector->rand, OGS_RAND_LEN);
+    // memcpy(mme_ue->autn, e_utran_vector->autn, OGS_AUTN_LEN);
+
+    // DAVID: Use dummy authentication vectors
+
+    mme_ue->xres_len = 16;
+    memset(mme_ue->xres, 0, mme_ue->xres_len);
+    memset(mme_ue->kasme, 0, OGS_SHA256_DIGEST_SIZE);
+    memset(mme_ue->rand, 0, OGS_RAND_LEN);
+    memset(mme_ue->autn, 0, OGS_AUTN_LEN);
 
     CLEAR_MME_UE_TIMER(mme_ue->t3460);
 

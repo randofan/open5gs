@@ -47,6 +47,9 @@ int esm_handle_pdn_connectivity_request(mme_bearer_t *bearer,
 
     ogs_assert(MME_UE_HAVE_IMSI(mme_ue));
 
+    // DAVID: I don't think we need to remove this because we should have a 
+    // valid security context (it just doesn't mean anything).
+
     if (!SECURITY_CONTEXT_IS_VALID(mme_ue)) {
         ogs_error("No Security Context : IMSI[%s]", mme_ue->imsi_bcd);
         r = nas_eps_send_pdn_connectivity_reject(
